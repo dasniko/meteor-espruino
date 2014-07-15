@@ -1,13 +1,7 @@
 if (Meteor.isClient) {
     Template.espruino.events({
-        'click #led1': function () {
-            Meteor.call("toggleLed", "LED1");
-        },
-        'click #led2': function () {
-            Meteor.call("toggleLed", "LED2");
-        },
-        'click #led3': function () {
-            Meteor.call("toggleLed", "LED3");
+        'click input': function (e) {
+            Meteor.call("toggleLed", e.target.id.toUpperCase());
         }
     });
 }
@@ -19,13 +13,15 @@ if (Meteor.isServer) {
         comPort: comPort
     });
 
+    var noop = function() {};
+
     Meteor.startup(function () {
         // code to run on server at startup
         espruino.open(function() {
             [1, 2, 3].forEach(function(n) {
                 espruino.command('LED'+n+'.set()', function() {
                     setTimeout(function() {
-                        espruino.command('LED'+n+'.reset()', function(){});
+                        espruino.command('LED'+n+'.reset()', noop);
                     }, 1500);
                 });
             });
@@ -36,7 +32,7 @@ if (Meteor.isServer) {
         toggleLed: function(pin) {
             espruino.command("digitalRead(" + pin + ");", function(result) {
                 var v = (result == 0) ? 1 : 0;
-                espruino.command("digitalWrite(" + pin + ", " + v + ");", function() {})
+                espruino.command("digitalWrite(" + pin + ", " + v + ");", noop)
             })
         }
     });
