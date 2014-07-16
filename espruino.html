@@ -1,4 +1,5 @@
 <head>
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
     <title>Hello Espruino</title>
 </head>
 
@@ -8,7 +9,10 @@
 
 <template name="espruino">
     <h1>Hello Espruino!</h1>
-    <input type="button" id="led1" value="Toggle LED1"/>
-    <input type="button" id="led2" value="Toggle LED2"/>
-    <input type="button" id="led3" value="Toggle LED3"/>
+    <div>Klick on the LED icons to switch on/off:</div>
+    <div>
+        <i id="led1" class="link led1 fa fa-3x {{statusLed1}}" title="LED1"></i>
+        <i id="led2" class="link led2 fa fa-3x {{statusLed2}}" title="LED2"></i>
+        <i id="led3" class="link led3 fa fa-3x {{statusLed3}}" title="LED3"></i>
+    </div>
 </template>

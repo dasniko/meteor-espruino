@@ -1,1 +1,20 @@
 /* CSS declarations go here */
+body {
+    margin: 10px;
+}
+
+.link {
+    cursor: pointer;
+}
+
+.led1 {
+    color: red;
+}
+
+.led2 {
+    color: lawngreen;
+}
+
+.led3 {
+    color: blue;
+}

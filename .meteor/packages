@@ -6,4 +6,5 @@
 standard-app-packages
 autopublish
 insecure
+meteor-bootstrap-3
 npm
