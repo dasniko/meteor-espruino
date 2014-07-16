@@ -1,26 +1,40 @@
 if (Meteor.isClient) {
+    var ledDep = new Deps.Dependency;
+
+    Deps.autorun(function() {
+        ledDep.depend();
+        Meteor.setTimeout(function() {
+            Meteor.call("getLedStatus", function(err, ledStatus) {
+                for (var led in ledStatus) {
+                    if (ledStatus.hasOwnProperty(led)) {
+                        Session.set("status_" + led, ledStatus[led]);
+                    }
+                }
+            });
+        }, 20);
+    });
+
     Template.espruino.events({
         'click i.fa': function (e) {
             var id = e.target.id;
-            Meteor.call("toggleLed", id.toUpperCase(), function(err, result) {
-                console.log(id + ": " + result);
-                Session.set("status_" + id, result);
+            Meteor.call("toggleLed", id, function() {
+                ledDep.changed();
             });
         }
     });
 
     Template.espruino.statusLed1 = function() {
-        return _statusLed("led1");
+        return _statusLed(1);
     };
     Template.espruino.statusLed2 = function() {
-        return _statusLed("led2");
+        return _statusLed(2);
     };
     Template.espruino.statusLed3 = function() {
-        return _statusLed("led3");
+        return _statusLed(3);
     };
     _statusLed = function(led) {
-        return "fa-circle" + (Session.equals("status_" + led, 1) ? "" : "-o");
-    }
+        return "fa-circle" + (Session.equals("status_LED" + led, 1) ? "" : "-o");
+    };
 }
 
 if (Meteor.isServer) {
@@ -31,8 +45,9 @@ if (Meteor.isServer) {
 
     var noop = function() {};
 
+    var ledStatus = {LED1: 0, LED2: 0, LED3: 0};
+
     Meteor.startup(function () {
-        // code to run on server at startup
         espruino.open(function() {
             [1, 2, 3].forEach(function(n) {
                 espruino.command('LED'+n+'.set()', function() {
@@ -47,9 +62,19 @@ if (Meteor.isServer) {
     Meteor.methods({
         toggleLed: function(pin) {
             espruino.command("digitalRead(" + pin + ");", function(result) {
-                var v = (result == 0) ? 1 : 0;
-                espruino.command("digitalWrite(" + pin + ", " + v + ");", noop)
-            })
+                var status = (result == 0) ? 1 : 0;
+                espruino.command("digitalWrite(" + pin + ", " + status + ");", function() {
+                    _setLedStatus(pin, status);
+                });
+            });
+        },
+        getLedStatus: function() {
+            return ledStatus;
         }
     });
+
+    _setLedStatus = function(pin, status) {
+        ledStatus[pin] = status;
+    };
+
 }
