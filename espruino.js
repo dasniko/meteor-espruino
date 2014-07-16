@@ -24,10 +24,9 @@ if (Meteor.isClient) {
 }
 
 if (Meteor.isServer) {
-    var comPort = "COM10";
     var nodeEspruino = Meteor.require("node-espruino");
     var espruino = nodeEspruino.espruino({
-        comPort: comPort
+        comPort: config.comPort
     });
 
     var noop = function() {};
@@ -39,7 +38,7 @@ if (Meteor.isServer) {
                 espruino.command('LED'+n+'.set()', function() {
                     setTimeout(function() {
                         espruino.command('LED'+n+'.reset()', noop);
-                    }, 1500);
+                    }, 100);
                 });
             });
         });
