@@ -22,15 +22,9 @@ Template.espruino.events({
     }
 });
 
-Template.espruino.statusLed1 = function() {
-    return _statusLed(1);
-};
-Template.espruino.statusLed2 = function() {
-    return _statusLed(2);
-};
-Template.espruino.statusLed3 = function() {
-    return _statusLed(3);
-};
+UI.registerHelper("statusLed", function(pin) {
+    return _statusLed(pin);
+});
 _statusLed = function(led) {
     return "fa-circle" + (Session.equals("status_LED" + led, 1) ? "" : "-o");
 };
